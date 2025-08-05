@@ -1,35 +1,40 @@
-"use client";
-import { 
-  HomeOutlined, 
-  UserOutlined, 
-  FileTextOutlined, 
-  ShoppingOutlined, 
-  CarOutlined, 
-  TeamOutlined, 
-  SettingOutlined, 
-  QuestionCircleOutlined, 
-  LogoutOutlined 
-} from '@ant-design/icons';
-import { Avatar, Badge, Tooltip } from 'antd';
-import { useState, useEffect } from 'react';
+"use client"
+
+import type React from "react"
+import ProfileImage from '../../../assests/profileImage.png'
+import Logo from '../../../assests/logo.png'
+import { useState, useEffect } from "react"
+import {
+  HomeOutlined,
+  UserOutlined,
+  FileTextOutlined,
+  ShoppingOutlined,
+  CarOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  QuestionCircleOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons"
+import Image from "next/image"
 
 interface SidebarItem {
-  key: string;
-  icon: React.ComponentType;
-  label: string;
-  notificationCount?: number;
+  key: string
+  icon: React.ComponentType
+  label: string
+  notificationCount?: number
+  isSpecial?: boolean // for the orange shipment item
 }
 
 interface SidebarProps {
-  activeKey?: string;
-  collapsed?: boolean;
-  onCollapse?: (collapsed: boolean) => void;
-  items?: SidebarItem[];
+  activeKey?: string
+  collapsed?: boolean
+  onCollapse?: (collapsed: boolean) => void
+  items?: SidebarItem[]
   user?: {
-    name: string;
-    avatar?: string;
-    notificationCount?: number;
-  };
+    name: string
+    avatar?: string
+    notificationCount?: number
+  }
 }
 
 const defaultItems: SidebarItem[] = [
@@ -37,150 +42,102 @@ const defaultItems: SidebarItem[] = [
   { key: "2", icon: UserOutlined, label: "Users" },
   { key: "3", icon: FileTextOutlined, label: "Documents" },
   { key: "4", icon: ShoppingOutlined, label: "Products" },
-  { key: "5", icon: CarOutlined, label: "Shipments", notificationCount: 3 },
+  { key: "5", icon: CarOutlined, label: "Shipments", notificationCount: 3, isSpecial: true },
   { key: "6", icon: TeamOutlined, label: "Team" },
-  { key: "7", icon: SettingOutlined, label: "Settings" },
-  { key: "8", icon: QuestionCircleOutlined, label: "Help" },
-];
+  { key: "7", icon: QuestionCircleOutlined, label: "Help" },
+]
 
-const Sidebar = ({ 
-  activeKey = "5", 
+const Sidebar = ({
+  activeKey = "5",
   collapsed: propCollapsed = false,
   onCollapse,
   items = defaultItems,
-  user = { name: "User", notificationCount: 1 }
+  user = { name: "User", notificationCount: 1 },
 }: SidebarProps) => {
-  const [collapsed, setCollapsed] = useState(propCollapsed);
-  const [isMobile, setIsMobile] = useState(false);
+  const [collapsed, setCollapsed] = useState(true) // Always collapsed to match image
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setCollapsed(true);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    setCollapsed(propCollapsed);
-  }, [propCollapsed]);
-
-  const toggleCollapse = () => {
-    const newCollapsed = !collapsed;
-    setCollapsed(newCollapsed);
-    onCollapse?.(newCollapsed);
-  };
+      setIsMobile(window.innerWidth < 768)
+    }
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   return (
-    <div className={`fixed flex flex-col min-h-screen bg-blue-600 transition-all duration-300 z-50
-      ${collapsed ? 'w-16 sm:w-20' : 'w-48 sm:w-56'}`}
-    >
-      {/* Logo and Collapse Button */}
-      <div className="flex items-center justify-between p-3 border-b border-blue-500">
-        {!collapsed && (
-          <div className="flex items-center">
-            <div className="flex items-center justify-center w-8 h-8 mr-2 bg-white rounded">
-              <span className="text-sm font-bold text-blue-600">S</span>
-            </div>
-            <span className="text-sm font-medium text-white">ShipmentPro</span>
-          </div>
-        )}
-        {collapsed && (
-          <div className="flex items-center justify-center w-8 h-8 mx-auto bg-white rounded">
-            <span className="text-sm font-bold text-blue-600">S</span>
-          </div>
-        )}
-        <button 
-          onClick={toggleCollapse}
-          className="hidden ml-auto text-blue-200 hover:text-white sm:block"
-        >
-          {collapsed ? '»' : '«'}
-        </button>
-      </div>
+    <>
+      {/* Mobile Overlay */}
+      {isMobile && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" />}
 
-      {/* Navigation Items */}
-      <div className="flex-1 py-4 overflow-y-auto">
-        {items.map((item) => {
-          const Icon = item.icon;
-          const isActive = item.key === activeKey;
-          
-          return (
-            <Tooltip 
-              key={item.key} 
-              title={collapsed ? item.label : null} 
-              placement="right"
-            >
+     {/* Sidebar */}
+     <div
+        className={`fixed left-0 top-0 h-full bg-blue-600 transition-all duration-300 z-50 flex flex-col w-16`}
+      >
+        {/* Logo */}
+        <div className="flex items-center justify-center p-4 border-b border-blue-500">
+          <div className="flex items-center justify-center  bg-white rounded">
+          <Image
+                src={Logo}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover"
+                width={20}
+                height={20}
+              />
+          </div>
+        </div>
+
+        {/* Navigation Items */}
+        <div className="flex-1 ">
+          {items.map((item) => {
+            const Icon = item.icon
+            const isActive = item.key === activeKey
+
+            return (
               <div
-                className={`flex items-center mx-2 mb-1 p-2 rounded cursor-pointer transition-colors
-                  ${isActive ? 'bg-blue-700 text-white' : 'text-blue-200 hover:bg-blue-700 hover:text-white'}
-                  ${collapsed ? 'justify-center' : 'justify-start'}`}
+                key={item.key}
+                className={`relative flex items-center justify-center mx-2 mb-1 p-3 cursor-pointer transition-all duration-200 ${
+                  item.isSpecial
+                    ? "bg-orange-500 text-white hover:bg-orange-600 rounded-md"
+                    : isActive
+                      ? "bg-blue-700 text-white"
+                      : "text-blue-200 hover:bg-blue-700 hover:text-white"
+                }`}
+                title={item.label}
               >
-                <div className="relative">
-                  <Icon  />
-                  {item.notificationCount && !isActive && (
-                    <Badge 
-                      count={item.notificationCount} 
-                      size="small" 
-                      className="absolute -top-2 -right-2"
-                    />
-                  )}
-                </div>
-                {!collapsed && (
-                  <span className="ml-3 text-sm whitespace-nowrap">
-                    {item.label}
-                    {item.notificationCount && isActive && (
-                      <Badge 
-                        count={item.notificationCount} 
-                        size="small" 
-                        className="ml-2"
-                      />
-                    )}
-                  </span>
-                )}
+                <Icon  />
               </div>
-            </Tooltip>
-          );
-        })}
-      </div>
-
-      {/* User Section */}
-      <div className="p-3 border-t border-blue-500">
-        {collapsed ? (
-          <Tooltip title={user.name} placement="right">
-            <Badge count={user.notificationCount} size="small">
-              <Avatar 
-                size="default"
-                className="flex items-center justify-center mx-auto bg-orange-500"
-              >
-                {user.name.charAt(0)}
-              </Avatar>
-            </Badge>
-          </Tooltip>
-        ) : (
-          <div className="flex items-center">
-            <Badge count={user.notificationCount} size="small">
-              <Avatar 
-                size="default"
-                className="flex items-center justify-center mr-2 bg-orange-500"
-              >
-                {user.name.charAt(0)}
-              </Avatar>
-            </Badge>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-white truncate">{user.name}</p>
-              <p className="text-xs text-blue-200 truncate">Admin</p>
-            </div>
-            <LogoutOutlined className="text-blue-200 cursor-pointer hover:text-white" />
+            )
+          })}
+        </div>
+           {/* Bottom Section - Fixed at bottom */}
+           <div className="mt-auto border-t border-blue-500">
+          {/* User Avatar */}
+          <div className="flex items-center justify-center p-3 relative">
+              <Image
+                src={ProfileImage}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover"
+                width={20}
+                height={20}
+              />
+       
           </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
-export default Sidebar;
+          {/* Settings */}
+          <div className="flex items-center justify-center p-3 text-blue-200 hover:bg-blue-700 hover:text-white cursor-pointer transition-colors">
+            <SettingOutlined className="text-lg" />
+          </div>
+
+          {/* Logout */}
+          <div className="flex items-center justify-center p-3 text-blue-200 hover:bg-blue-700 hover:text-white cursor-pointer transition-colors">
+            <LogoutOutlined className="text-lg" />
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default Sidebar

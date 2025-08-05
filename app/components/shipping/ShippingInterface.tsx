@@ -18,7 +18,7 @@ const ShippingInterface = () => {
   ];
 
   return (
-    <div className="px-3 ml-10 md:mx-auto max-w-7xl sm:px-4 md:px-6 lg:px-8">
+    <div className="px-3 ml-10 md:mx-auto max-w-[1700px] sm:px-4 md:px-6 lg:px-8">
       {/* Progress Steps */}
       <ProgressSteps steps={steps} currentStep={4} />
 
@@ -36,15 +36,20 @@ const ShippingInterface = () => {
         {/* Shipping Details */}
         <ShippingDetails />
       </div>
-      <div className="grid grid-cols-5 gap-4 items-center">
-        {/*Add Details */}
-        <AddDetails />
-        {/* Cost Summary */}
-        <CostSummary />
+      <div className="grid grid-cols-5 gap-4 items-stretch">
+        {" "}
+        {/* Changed from items-center to items-stretch */}
+        {/* Add Details - spans 3 columns */}
+        <div className="col-span-2 h-full">
+          <AddDetails />
+        </div>
+        {/* Cost Summary - spans 2 columns */}
+        <div className="col-span-3 h-full">
+          <CostSummary />
+        </div>
       </div>
 
-<ActionButton/>
-
+      <ActionButton />
 
       {/* Tables Section */}
       <ShippingTables />

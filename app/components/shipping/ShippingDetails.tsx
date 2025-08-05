@@ -11,11 +11,12 @@ const ShippingDetails = () => {
   ]
 
   return (
-    <Card
-      title="Shipping Details"
-      className="shadow-sm border-0"
-      headStyle={{ borderBottom: '1px solid #e5e7eb', paddingBottom: '1rem' }}
-    >
+    <div className=" bg-white  border-t rounded-[18px]">
+        
+    <div className='pt-4 px-3'>
+    <div>
+       <p className='text-lg font-semibold'>Shipping Details</p>
+     </div>
       <div className="space-y-4 sm:space-y-6">
         {shippingInfo.map((info, index) => (
           <div key={index}>
@@ -31,7 +32,8 @@ const ShippingDetails = () => {
           </div>
         ))}
       </div>
-    </Card>
+      </div>
+    </div>
   )
 }
 
